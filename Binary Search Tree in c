@@ -1,0 +1,207 @@
+#include<stdio.h>
+#include<stdlib.h>
+struct node
+{
+	struct node *left;
+	int data;
+	struct node *right;
+};
+struct node *root=NULL;
+void insert(int x);
+void deleten(int x);
+void search(int x);
+struct node *createnode(int x);
+void inorder(struct node *p);
+void preorder(struct node *p);
+void postorder(struct node *p);
+int main()
+{
+	int op,x;
+	while(1)
+	{
+		printf("\nMenu\n-----\n1:Insert 2:Delete 3:Search 4:Inorder 5:Preorder 6:Postorder 7:Exit\nEnter your option : ");
+		scanf("%d",&op);
+		switch(op)
+		{
+			case 1: printf("Enter the value to be inserted : ");
+			        scanf("%d",&x);
+			        insert(x);
+			        break;
+			case 2: printf("Enter the value to be deleted : ");
+			        scanf("%d",&x);
+			        deleten(x);
+			        break;
+			case 3: printf("Enter the value to be searched : ");
+			        scanf("%d",&x);
+			        search(x);
+			        break;
+			case 4:inorder(root);
+			        break;
+			case 5:preorder(root);
+			        break;
+			case 6:postorder(root);
+			        break;
+			case 7:exit(0);    
+		}
+	}
+}
+
+void insert(int x)
+{
+	struct node *p,*q,*parent;
+	p=createnode(x);
+	if(root==NULL)
+	{
+		root=p;
+	}
+	else
+	{
+		q=root;
+		while(q!=NULL)
+		{
+			parent=q;
+			if(p->data>q->data)
+			q=q->right;
+			else
+			q=q->left;
+		}
+		if(p->data>parent->data)
+		parent->right=p;
+		else
+		parent->left=p;
+	}
+}
+
+void deleten(int x)
+{
+	struct node *q,*parent,*t;
+	q=root;
+	if(root==NULL)
+	printf("Tree is empty\n");
+	else
+	{
+	while((q->data!=x))
+	{
+		parent=q;
+		if(x<q->data)
+		q=q->left;
+		else
+		q=q->right;
+	}
+	if(q==root)//if the node to be deleted is root
+	{
+		t=root->left;
+		while(t!=NULL)
+		{
+			parent=t;
+			t=t->right;
+		}
+		parent->right=root->right;
+		root=root->left;		
+	}
+	else//if the node to be deleted is leaf node
+	if((q->left==NULL)&&(q->right==NULL))
+	{
+		if(parent->left==q)
+		parent->left=NULL;
+		else
+		parent->right=NULL;
+	}
+	else//if the node to be deleted has left subtree
+	if((q->left!=NULL)&&(q->right==NULL))
+	{
+		if(parent->left==q)
+		parent->left=q->left;
+		else
+		parent->right=q->left;		
+	}
+	else//if the node to be deleted has right subtree
+	if((q->left==NULL)&&(q->right!=NULL))
+	{
+		if(parent->left==q)
+		parent->left=q->right;
+		else
+		parent->right=q->right;		
+	}
+	else//if the node to be deleted has boft left and right subtree
+	{
+		t=q->left;
+		while(t->right!=NULL)
+		t=t->right;
+		t->right=q->right;
+		if(parent->left==q)
+		parent->left=q->left;
+		else
+		parent->right=q->left;
+	}
+	}
+	free(q);
+}
+
+void search(int x)
+{
+	struct node *q,*parent;
+	q=root;
+	if(root==NULL)
+	printf("Tree is empty\n");
+	while((q!=NULL)&&(q->data!=x))
+	{
+		parent=q;
+		if(x<q->data)
+		q=q->left;
+		else
+		q=q->right;
+		if((q==NULL))
+		break;
+	}
+	if(q!=NULL)
+	printf("Element %d is found with parent %d\n",q->data,parent->data);
+	else
+	printf("Element not found\n");
+}
+
+struct node *createnode(int x)
+{
+	struct node *p;
+	p=(struct node *)malloc(sizeof(struct node));
+	p->left=NULL;
+	p->data=x;
+	p->right=NULL;
+	return(p);
+}
+
+void inorder(struct node *p)
+{
+	if(root==NULL)
+	printf("Tree is empty\n");
+	if(p!=NULL)
+	{
+		inorder(p->left);
+		printf("%d ",p->data);
+		inorder(p->right);
+	}
+}
+
+void preorder(struct node *p)
+{
+	if(root==NULL)
+	printf("Tree is empty\n");
+	if(p!=NULL)
+	{
+		printf("%d ",p->data);
+		preorder(p->left);
+		preorder(p->right);
+	}
+}
+
+void postorder(struct node *p)
+{
+	if(root==NULL)
+	printf("Tree is empty\n");
+	if(p!=NULL)
+	{		
+		postorder(p->left);
+		postorder(p->right);
+		printf("%d ",p->data);
+	}	
+}
